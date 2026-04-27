@@ -1,5 +1,5 @@
-import connectDB from "../../server/config/db";
-import Booking from "../../server/models/Booking";
+import connectDB from "../config/db";
+import Booking from "../models/Booking";
 
 export default async function handler(req, res) {
   await connectDB();

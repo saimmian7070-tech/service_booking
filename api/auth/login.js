@@ -1,5 +1,5 @@
-import connectDB from "../../server/config/db";
-import User from "../../server/models/User";
+import connectDB from "../config/db";
+import User from "../models/User";
 import jwt from "jsonwebtoken";
 
 export default async function handler(req, res) {
@@ -20,4 +20,5 @@ export default async function handler(req, res) {
       res.status(500).json(err);
     }
   }
+    return res.status(405).json({ message: "Method not allowed" });
 }
