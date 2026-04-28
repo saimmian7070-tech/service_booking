@@ -5,6 +5,21 @@ import jwt from "jsonwebtoken";
 export default async function handler(req, res) {
   await connectDB();
 
+  const authHeader = req.headers.authorization;
+
+if (!authHeader) {
+  return res.status(401).json("No token provided");
+}
+
+const token = authHeader.split(" ")[1];
+
+let decoded;
+try {
+  decoded = jwt.verify(token, process.env.JWT_SECRET);
+} catch (err) {
+  return res.status(401).json("Invalid token");
+}
+
   const token = req.headers.authorization?.split(" ")[1];
   const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
@@ -13,7 +28,7 @@ export default async function handler(req, res) {
       const { service, date, time } = req.body;
 
       const booking = await Booking.create({
-        userId: decoded.id, // ✅ from token
+        userId: decoded.id,
         service,
         date,
         time,
@@ -28,7 +43,7 @@ export default async function handler(req, res) {
 
   if (req.method === "GET") {
     try {
-      const bookings = await Booking.find({ userId: decoded.id }); // ✅ filter
+      const bookings = await Booking.find({ userId: decoded.id });
       return res.status(200).json(bookings);
     } catch (err) {
       console.log(err);
