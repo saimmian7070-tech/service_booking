@@ -6,23 +6,31 @@ export default function Booking() {
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [bookings, setBookings] = useState([]);
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
-    API.get("/bookings")
-      .then((res) => setBookings(res.data))
+        API.get("/bookings", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((res) => setBookings(res.data))
       .catch(() => alert("Error fetching bookings"));
   }, []);
 
   const handleBooking = async () => {
     try {
-      const user = JSON.parse(localStorage.getItem("user"));
-
       const res = await API.post("/bookings", {
-        userId: user?._id,
         service,
         date,
         time,
-      });
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       alert("Booking created!");
       setBookings((prev) => [...prev, res.data]);
