@@ -16,7 +16,7 @@ export default function Booking() {
         })
         .then((res) => setBookings(res.data))
       .catch(() => alert("Error fetching bookings"));
-  }, []);
+  }, [token]);
 
   const handleBooking = async () => {
     try {
