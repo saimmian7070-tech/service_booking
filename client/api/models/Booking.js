@@ -5,7 +5,7 @@ const bookingSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
-  service: String,     // e.g. "Haircut", "Cleaning"
+  service: String,
   date: String,
   time: String,
 }, { timestamps: true });

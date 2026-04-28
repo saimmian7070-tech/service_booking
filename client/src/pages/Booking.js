@@ -38,7 +38,6 @@ export default function Booking() {
   return (
     <div style={{ padding: "30px", backgroundColor: "#f5f6fa", minHeight: "100vh" }}>
       
-      {/* Logout top-right */}
       <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "20px" }}>
         <button
           style={{
@@ -60,7 +59,6 @@ export default function Booking() {
 
       <div style={{ display: "flex", gap: "30px", justifyContent: "center" }}>
         
-        {/* LEFT - CREATE BOOKING */}
         <div
           style={{
             width: "300px",
@@ -103,7 +101,6 @@ export default function Booking() {
           </button>
         </div>
 
-        {/* RIGHT - BOOKINGS LIST */}
         <div
           style={{
             width: "400px",
@@ -142,7 +139,6 @@ export default function Booking() {
   );
 }
 
-// styles
 const inputStyle = {
   width: "100%",
   padding: "10px",
