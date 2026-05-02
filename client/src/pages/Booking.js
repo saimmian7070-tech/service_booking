@@ -2,141 +2,132 @@ import { useEffect, useState } from "react";
 import API from "../api/api";
 
 export default function Booking() {
-  const [service, setService] = useState("");
-  const [date, setDate] = useState("");
-  const [time, setTime] = useState("");
+  const [form, setForm] = useState({
+    service: "",
+    date: "",
+    time: "",
+  });
+
   const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-        API.get("/bookings", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        .then((res) => setBookings(res.data))
-      .catch(() => alert("Error fetching bookings"));
+    const fetchBookings = async () => {
+      try {
+        setError("");
+        const res = await API.get("/bookings", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setBookings(res.data);
+      } catch (err) {
+        setError("Failed to load bookings.");
+      }
+    };
+
+    fetchBookings();
   }, [token]);
 
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
   const handleBooking = async () => {
+    if (!form.service || !form.date || !form.time) {
+      setError("All fields are required.");
+      return;
+    }
+
     try {
-      const res = await API.post("/bookings", {
-        service,
-        date,
-        time,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      setLoading(true);
+      setError("");
 
-      alert("Booking created!");
+      const res = await API.post("/bookings", form, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
       setBookings((prev) => [...prev, res.data]);
-
-      setService("");
-      setDate("");
-      setTime("");
-    } catch {
-      alert("Something went wrong!");
+      setForm({ service: "", date: "", time: "" });
+    } catch (err) {
+      setError("Booking failed. Try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
+  const handleLogout = () => {
+    localStorage.clear();
+    window.location.href = "/";
+  };
+
   return (
-    <div style={{ padding: "30px", backgroundColor: "#f5f6fa", minHeight: "100vh" }}>
+    <div style={styles.page}>
       
-      <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "20px" }}>
-        <button
-          style={{
-            padding: "10px 20px",
-            backgroundColor: "#dc3545",
-            color: "#fff",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer"
-          }}
-          onClick={() => {
-            localStorage.clear();
-            window.location.href = "/";
-          }}
-        >
+      <header style={styles.header}>
+        <h2 style={styles.title}>Booking Dashboard</h2>
+        <button style={styles.logoutBtn} onClick={handleLogout}>
           Logout
         </button>
-      </div>
+      </header>
 
-      <div style={{ display: "flex", gap: "30px", justifyContent: "center" }}>
-        
-        <div
-          style={{
-            width: "300px",
-            padding: "20px",
-            backgroundColor: "#fff",
-            borderRadius: "10px",
-            boxShadow: "0 0 10px rgba(0,0,0,0.1)"
-          }}
-        >
-          <h3 style={{ marginBottom: "15px" }}>Create Booking</h3>
+      {error && <div style={styles.error}>{error}</div>}
+
+      <div style={styles.container}>
+
+        {/* FORM CARD */}
+        <div style={styles.card}>
+          <h3 style={styles.cardTitle}>Create New Booking</h3>
 
           <input
-            style={inputStyle}
+            name="service"
+            value={form.service}
+            onChange={handleChange}
             placeholder="Service"
-            value={service}
-            onChange={(e) => setService(e.target.value)}
+            style={styles.input}
           />
 
           <input
-            style={inputStyle}
+            name="date"
             type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
+            value={form.date}
+            onChange={handleChange}
+            style={styles.input}
           />
 
           <input
-            style={inputStyle}
-            placeholder="Time"
-            value={time}
-            onChange={(e) => setTime(e.target.value)}
+            name="time"
+            value={form.time}
+            onChange={handleChange}
+            placeholder="Time (e.g. 10:30 AM)"
+            style={styles.input}
           />
 
           <button
-            style={primaryBtn}
-            onMouseOver={(e) => (e.target.style.backgroundColor = "#0056b3")}
-            onMouseOut={(e) => (e.target.style.backgroundColor = "#007bff")}
             onClick={handleBooking}
+            style={{
+              ...styles.primaryBtn,
+              opacity: loading ? 0.7 : 1,
+              cursor: loading ? "not-allowed" : "pointer",
+            }}
+            disabled={loading}
           >
-            Book
+            {loading ? "Booking..." : "Book Appointment"}
           </button>
         </div>
 
-        <div
-          style={{
-            width: "400px",
-            padding: "20px",
-            backgroundColor: "#fff",
-            borderRadius: "10px",
-            boxShadow: "0 0 10px rgba(0,0,0,0.1)"
-          }}
-        >
-          <h3 style={{ marginBottom: "15px" }}>All Bookings</h3>
+        {/* BOOKINGS LIST */}
+        <div style={styles.card}>
+          <h3 style={styles.cardTitle}>Your Bookings</h3>
 
           {bookings.length === 0 ? (
-            <p>No bookings yet</p>
+            <p style={{ color: "#777" }}>No bookings found</p>
           ) : (
             bookings.map((b) => (
-              <div
-                key={b._id}
-                style={{
-                  borderLeft: "5px solid #007bff",
-                  padding: "10px",
-                  marginBottom: "10px",
-                  backgroundColor: "#f9f9f9",
-                  borderRadius: "5px"
-                }}
-              >
-                <p style={{ margin: 0, fontWeight: "bold" }}>{b.service}</p>
-                <p style={{ margin: 0 }}>{b.date}</p>
-                <p style={{ margin: 0 }}>{b.time}</p>
+              <div key={b._id} style={styles.bookingItem}>
+                <div style={{ fontWeight: "600" }}>{b.service}</div>
+                <div style={styles.meta}>{b.date} • {b.time}</div>
               </div>
             ))
           )}
@@ -147,20 +138,92 @@ export default function Booking() {
   );
 }
 
-const inputStyle = {
-  width: "100%",
-  padding: "10px",
-  marginBottom: "10px",
-  borderRadius: "5px",
-  border: "1px solid #ccc"
-};
+/* STYLES */
+const styles = {
+  page: {
+    minHeight: "100vh",
+    background: "#f4f6f9",
+    padding: "30px",
+    fontFamily: "Arial, sans-serif",
+  },
 
-const primaryBtn = {
-  width: "100%",
-  padding: "10px",
-  backgroundColor: "#007bff",
-  color: "#fff",
-  border: "none",
-  borderRadius: "5px",
-  cursor: "pointer"
+  header: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: "25px",
+  },
+
+  title: {
+    margin: 0,
+    color: "#222",
+  },
+
+  logoutBtn: {
+    padding: "10px 18px",
+    background: "#e74c3c",
+    color: "#fff",
+    border: "none",
+    borderRadius: "6px",
+    cursor: "pointer",
+  },
+
+  container: {
+    display: "flex",
+    gap: "25px",
+    flexWrap: "wrap",
+    justifyContent: "center",
+  },
+
+  card: {
+    width: "340px",
+    background: "#fff",
+    padding: "20px",
+    borderRadius: "12px",
+    boxShadow: "0 6px 18px rgba(0,0,0,0.08)",
+  },
+
+  cardTitle: {
+    marginBottom: "15px",
+    color: "#333",
+  },
+
+  input: {
+    width: "100%",
+    padding: "12px",
+    marginBottom: "10px",
+    borderRadius: "8px",
+    border: "1px solid #ddd",
+    outline: "none",
+  },
+
+  primaryBtn: {
+    width: "100%",
+    padding: "12px",
+    background: "#007bff",
+    color: "#fff",
+    border: "none",
+    borderRadius: "8px",
+  },
+
+  bookingItem: {
+    padding: "10px",
+    borderLeft: "4px solid #007bff",
+    background: "#f9f9f9",
+    marginBottom: "10px",
+    borderRadius: "6px",
+  },
+
+  meta: {
+    fontSize: "13px",
+    color: "#666",
+  },
+
+  error: {
+    background: "#ffe5e5",
+    color: "#c0392b",
+    padding: "10px",
+    borderRadius: "6px",
+    marginBottom: "15px",
+  },
 };
