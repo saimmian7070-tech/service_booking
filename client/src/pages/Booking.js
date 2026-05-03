@@ -22,7 +22,7 @@ export default function Booking() {
           headers: { Authorization: `Bearer ${token}` },
         });
         setBookings(res.data);
-      } catch (err) {
+      } catch {
         setError("Failed to load bookings.");
       }
     };
@@ -48,9 +48,9 @@ export default function Booking() {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      setBookings((prev) => [...prev, res.data]);
+      setBookings((prev) => [res.data, ...prev]);
       setForm({ service: "", date: "", time: "" });
-    } catch (err) {
+    } catch {
       setError("Booking failed. Try again.");
     } finally {
       setLoading(false);
@@ -64,27 +64,29 @@ export default function Booking() {
 
   return (
     <div style={styles.page}>
-      
-      <header style={styles.header}>
-        <h2 style={styles.title}>Booking Dashboard</h2>
+      <div style={styles.topBar}>
+        <div>
+          <h2 style={styles.title}>Bookings</h2>
+          <p style={styles.subTitle}>Manage your appointments easily</p>
+        </div>
+
         <button style={styles.logoutBtn} onClick={handleLogout}>
           Logout
         </button>
-      </header>
+      </div>
 
       {error && <div style={styles.error}>{error}</div>}
 
-      <div style={styles.container}>
-
-        {/* FORM CARD */}
+      <div style={styles.grid}>
+        {/* LEFT - FORM */}
         <div style={styles.card}>
-          <h3 style={styles.cardTitle}>Create New Booking</h3>
+          <h3 style={styles.cardTitle}>New Booking</h3>
 
           <input
             name="service"
             value={form.service}
             onChange={handleChange}
-            placeholder="Service"
+            placeholder="Service (e.g. Haircut)"
             style={styles.input}
           />
 
@@ -106,33 +108,38 @@ export default function Booking() {
 
           <button
             onClick={handleBooking}
+            disabled={loading}
             style={{
               ...styles.primaryBtn,
               opacity: loading ? 0.7 : 1,
-              cursor: loading ? "not-allowed" : "pointer",
+              transform: loading ? "scale(0.98)" : "scale(1)",
             }}
-            disabled={loading}
           >
-            {loading ? "Booking..." : "Book Appointment"}
+            {loading ? "Creating..." : "Create Booking"}
           </button>
         </div>
 
-        {/* BOOKINGS LIST */}
+        {/* RIGHT - LIST */}
         <div style={styles.card}>
-          <h3 style={styles.cardTitle}>Your Bookings</h3>
+          <h3 style={styles.cardTitle}>Your Schedule</h3>
 
           {bookings.length === 0 ? (
-            <p style={{ color: "#777" }}>No bookings found</p>
+            <p style={styles.empty}>No bookings yet</p>
           ) : (
             bookings.map((b) => (
-              <div key={b._id} style={styles.bookingItem}>
-                <div style={{ fontWeight: "600" }}>{b.service}</div>
-                <div style={styles.meta}>{b.date} • {b.time}</div>
+              <div key={b._id} style={styles.bookingCard}>
+                <div style={styles.bookingTop}>
+                  <span style={styles.service}>{b.service}</span>
+                  <span style={styles.badge}>Confirmed</span>
+                </div>
+
+                <div style={styles.meta}>
+                  📅 {b.date} • ⏰ {b.time}
+                </div>
               </div>
             ))
           )}
         </div>
-
       </div>
     </div>
   );
@@ -142,12 +149,12 @@ export default function Booking() {
 const styles = {
   page: {
     minHeight: "100vh",
-    background: "#f4f6f9",
     padding: "30px",
     fontFamily: "Arial, sans-serif",
+    background: "linear-gradient(135deg, #eef2f3, #d9e4f5)",
   },
 
-  header: {
+  topBar: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
@@ -156,31 +163,39 @@ const styles = {
 
   title: {
     margin: 0,
+    fontSize: "26px",
     color: "#222",
   },
 
-  logoutBtn: {
-    padding: "10px 18px",
-    background: "#e74c3c",
-    color: "#fff",
-    border: "none",
-    borderRadius: "6px",
-    cursor: "pointer",
+  subTitle: {
+    margin: 0,
+    fontSize: "13px",
+    color: "#666",
   },
 
-  container: {
+  logoutBtn: {
+    padding: "10px 16px",
+    background: "#ff4d4d",
+    color: "#fff",
+    border: "none",
+    borderRadius: "10px",
+    cursor: "pointer",
+    fontWeight: "600",
+  },
+
+  grid: {
     display: "flex",
-    gap: "25px",
+    gap: "20px",
     flexWrap: "wrap",
     justifyContent: "center",
   },
 
   card: {
-    width: "340px",
+    width: "360px",
     background: "#fff",
-    padding: "20px",
-    borderRadius: "12px",
-    boxShadow: "0 6px 18px rgba(0,0,0,0.08)",
+    padding: "22px",
+    borderRadius: "16px",
+    boxShadow: "0 12px 30px rgba(0,0,0,0.1)",
   },
 
   cardTitle: {
@@ -190,28 +205,52 @@ const styles = {
 
   input: {
     width: "100%",
-    padding: "12px",
+    padding: "12px 14px",
     marginBottom: "10px",
-    borderRadius: "8px",
+    borderRadius: "10px",
     border: "1px solid #ddd",
     outline: "none",
+    transition: "0.2s",
   },
 
   primaryBtn: {
     width: "100%",
     padding: "12px",
-    background: "#007bff",
+    marginTop: "10px",
+    background: "linear-gradient(135deg, #007bff, #0056d2)",
     color: "#fff",
     border: "none",
-    borderRadius: "8px",
+    borderRadius: "10px",
+    cursor: "pointer",
+    fontWeight: "600",
+    transition: "0.2s",
   },
 
-  bookingItem: {
-    padding: "10px",
-    borderLeft: "4px solid #007bff",
-    background: "#f9f9f9",
+  bookingCard: {
+    padding: "12px",
+    borderRadius: "12px",
+    background: "#f8f9ff",
     marginBottom: "10px",
-    borderRadius: "6px",
+    border: "1px solid #eef",
+  },
+
+  bookingTop: {
+    display: "flex",
+    justifyContent: "space-between",
+    marginBottom: "5px",
+  },
+
+  service: {
+    fontWeight: "600",
+    color: "#222",
+  },
+
+  badge: {
+    fontSize: "11px",
+    background: "#dff6e3",
+    color: "#1e7d34",
+    padding: "3px 8px",
+    borderRadius: "8px",
   },
 
   meta: {
@@ -219,11 +258,16 @@ const styles = {
     color: "#666",
   },
 
+  empty: {
+    color: "#888",
+    fontSize: "14px",
+  },
+
   error: {
     background: "#ffe5e5",
     color: "#c0392b",
     padding: "10px",
-    borderRadius: "6px",
+    borderRadius: "10px",
     marginBottom: "15px",
   },
 };

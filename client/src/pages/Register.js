@@ -24,90 +24,115 @@ export default function Register() {
     }
   };
 
+  const inputStyle = {
+    width: "100%",
+    padding: "12px 14px",
+    margin: "10px 0",
+    borderRadius: "8px",
+    border: "1px solid #ddd",
+    outline: "none",
+    fontSize: "14px",
+    transition: "0.2s",
+  };
+
+  const buttonStyle = {
+    width: "100%",
+    padding: "12px",
+    marginTop: "15px",
+    background: "linear-gradient(135deg, #007bff, #0056d2)",
+    color: "#fff",
+    border: "none",
+    borderRadius: "8px",
+    cursor: "pointer",
+    fontSize: "15px",
+    fontWeight: "600",
+    transition: "0.2s",
+  };
+
   return (
     <div
       style={{
-        maxWidth: "400px",
-        margin: "80px auto",
-        padding: "30px",
-        borderRadius: "10px",
-        boxShadow: "0 0 10px rgba(0,0,0,0.1)",
-        textAlign: "center",
-        backgroundColor: "#fff",
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "linear-gradient(135deg, #eef2f3, #8e9eab)",
+        fontFamily: "Arial, sans-serif",
       }}
     >
-      <h2 style={{ marginBottom: "20px" }}>Register</h2>
+      <div
+        style={{
+          width: "380px",
+          padding: "35px",
+          borderRadius: "14px",
+          backgroundColor: "#fff",
+          boxShadow: "0 10px 30px rgba(0,0,0,0.15)",
+          textAlign: "center",
+        }}
+      >
+        <h2 style={{ marginBottom: "5px", color: "#333" }}>Create Account</h2>
+        <p style={{ marginBottom: "20px", color: "#777", fontSize: "13px" }}>
+          Sign up to get started
+        </p>
 
-      <form onSubmit={handleSubmit}>
-        <input
-          name="name"
-          style={{
-            margin: "10px 0",
-            padding: "10px",
-            width: "100%",
-            borderRadius: "5px",
-            border: "1px solid #ccc",
-          }}
-          placeholder="Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
+        <form onSubmit={handleSubmit}>
+          <input
+            style={inputStyle}
+            placeholder="Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            onFocus={(e) => (e.target.style.border = "1px solid #007bff")}
+            onBlur={(e) => (e.target.style.border = "1px solid #ddd")}
+          />
 
-        <input
-          name="email"
-          type="email"
-          style={{
-            margin: "10px 0",
-            padding: "10px",
-            width: "100%",
-            borderRadius: "5px",
-            border: "1px solid #ccc",
-          }}
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+          <input
+            style={inputStyle}
+            placeholder="Email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            onFocus={(e) => (e.target.style.border = "1px solid #007bff")}
+            onBlur={(e) => (e.target.style.border = "1px solid #ddd")}
+          />
 
-        <input
-          name="password"
-          type="password"
-          style={{
-            margin: "10px 0",
-            padding: "10px",
-            width: "100%",
-            borderRadius: "5px",
-            border: "1px solid #ccc",
-          }}
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+          <input
+            style={inputStyle}
+            placeholder="Password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            onFocus={(e) => (e.target.style.border = "1px solid #007bff")}
+            onBlur={(e) => (e.target.style.border = "1px solid #ddd")}
+          />
 
-        <button
-          type="submit"
-          style={{
-            padding: "10px",
-            width: "100%",
-            marginTop: "15px",
-            backgroundColor: "#007bff",
-            color: "#fff",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
-          onMouseOver={(e) => (e.target.style.backgroundColor = "#0056b3")}
-          onMouseOut={(e) => (e.target.style.backgroundColor = "#007bff")}
-        >
-          Register
-        </button>
-      </form>
+          <button
+            type="submit"
+            style={buttonStyle}
+            onMouseOver={(e) =>
+              (e.target.style.transform = "translateY(-2px)")
+            }
+            onMouseOut={(e) =>
+              (e.target.style.transform = "translateY(0px)")
+            }
+          >
+            Register
+          </button>
+        </form>
 
-      <p style={{ marginTop: "15px" }}>
-        Already have an account?{" "}
-        <a href="/login" style={{ color: "#007bff", textDecoration: "none" }}>
-          Login
-        </a>
-      </p>
+        <p style={{ marginTop: "18px", fontSize: "13px", color: "#555" }}>
+          Already have an account?{" "}
+          <a
+            href="/login"
+            style={{
+              color: "#007bff",
+              textDecoration: "none",
+              fontWeight: "600",
+            }}
+          >
+            Login
+          </a>
+        </p>
+      </div>
     </div>
   );
 }
