@@ -78,48 +78,49 @@ export default function Booking() {
       {error && <div style={styles.error}>{error}</div>}
 
       <div style={styles.grid}>
-        {/* LEFT - FORM */}
+        {/* FORM CARD */}
         <div style={styles.card}>
           <h3 style={styles.cardTitle}>New Booking</h3>
 
-          <input
-            name="service"
-            value={form.service}
-            onChange={handleChange}
-            placeholder="Service (e.g. Haircut)"
-            style={styles.input}
-          />
+          <div style={styles.formCenter}>
+            <input
+              name="service"
+              value={form.service}
+              onChange={handleChange}
+              placeholder="Service (e.g. Haircut)"
+              style={styles.input}
+            />
 
-          <input
-            name="date"
-            type="date"
-            value={form.date}
-            onChange={handleChange}
-            style={styles.input}
-          />
+            <input
+              name="date"
+              type="date"
+              value={form.date}
+              onChange={handleChange}
+              style={styles.input}
+            />
 
-          <input
-            name="time"
-            value={form.time}
-            onChange={handleChange}
-            placeholder="Time (e.g. 10:30 AM)"
-            style={styles.input}
-          />
+            <input
+              name="time"
+              value={form.time}
+              onChange={handleChange}
+              placeholder="Time (e.g. 10:30 AM)"
+              style={styles.input}
+            />
 
-          <button
-            onClick={handleBooking}
-            disabled={loading}
-            style={{
-              ...styles.primaryBtn,
-              opacity: loading ? 0.7 : 1,
-              transform: loading ? "scale(0.98)" : "scale(1)",
-            }}
-          >
-            {loading ? "Creating..." : "Create Booking"}
-          </button>
+            <button
+              onClick={handleBooking}
+              disabled={loading}
+              style={{
+                ...styles.primaryBtn,
+                opacity: loading ? 0.7 : 1,
+              }}
+            >
+              {loading ? "Creating..." : "Create Booking"}
+            </button>
+          </div>
         </div>
 
-        {/* RIGHT - LIST */}
+        {/* LIST */}
         <div style={styles.card}>
           <h3 style={styles.cardTitle}>Your Schedule</h3>
 
@@ -132,7 +133,6 @@ export default function Booking() {
                   <span style={styles.service}>{b.service}</span>
                   <span style={styles.badge}>Confirmed</span>
                 </div>
-
                 <div style={styles.meta}>
                   📅 {b.date} • ⏰ {b.time}
                 </div>
@@ -164,7 +164,6 @@ const styles = {
   title: {
     margin: 0,
     fontSize: "26px",
-    color: "#222",
   },
 
   subTitle: {
@@ -180,7 +179,6 @@ const styles = {
     border: "none",
     borderRadius: "10px",
     cursor: "pointer",
-    fontWeight: "600",
   },
 
   grid: {
@@ -196,34 +194,38 @@ const styles = {
     padding: "22px",
     borderRadius: "16px",
     boxShadow: "0 12px 30px rgba(0,0,0,0.1)",
+    textAlign: "center",
   },
 
   cardTitle: {
     marginBottom: "15px",
-    color: "#333",
+  },
+
+  formCenter: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
   },
 
   input: {
-    width: "100%",
+    width: "92%",
     padding: "12px 14px",
-    marginBottom: "10px",
+    marginBottom: "12px",
     borderRadius: "10px",
     border: "1px solid #ddd",
     outline: "none",
-    transition: "0.2s",
   },
 
   primaryBtn: {
-    width: "100%",
+    width: "92%",
     padding: "12px",
-    marginTop: "10px",
+    marginTop: "5px",
     background: "linear-gradient(135deg, #007bff, #0056d2)",
     color: "#fff",
     border: "none",
     borderRadius: "10px",
     cursor: "pointer",
     fontWeight: "600",
-    transition: "0.2s",
   },
 
   bookingCard: {
@@ -232,6 +234,7 @@ const styles = {
     background: "#f8f9ff",
     marginBottom: "10px",
     border: "1px solid #eef",
+    textAlign: "left",
   },
 
   bookingTop: {
@@ -242,7 +245,6 @@ const styles = {
 
   service: {
     fontWeight: "600",
-    color: "#222",
   },
 
   badge: {
@@ -260,7 +262,6 @@ const styles = {
 
   empty: {
     color: "#888",
-    fontSize: "14px",
   },
 
   error: {
